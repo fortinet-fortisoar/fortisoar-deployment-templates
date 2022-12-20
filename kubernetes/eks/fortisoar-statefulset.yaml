@@ -1,0 +1,168 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fortisoar
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  selector:
+    matchLabels:
+      app: fortisoar
+  serviceName: fortisoar
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fortisoar
+    spec:
+      # Uncomment 'hostAliases' section if the repository hostname is not DNS resolvable.
+      # Make sure you update the IP to the correct value.
+      #hostAliases:
+      #- ip: "<ip-address-of-repository>"
+      #  hostnames:
+      #  - "@PLACEHOLDER_HOSTNAME_REPO@"
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"  
+      initContainers:
+      - name: fortisoar-init
+        image: @PLACEHOLDER_DOCKER_IMAGE@
+        imagePullPolicy: Always
+        command: ["/opt/cyops/scripts/kubernetes/init-container.sh"]
+        volumeMounts:
+          - mountPath: /var/lib/rabbitmq-init
+            name: fortisoar-v-rabbitmq
+          - mountPath: /var/lib/elasticsearch-init
+            name: fortisoar-v-elasticsearch
+          - mountPath: /var/lib/pgsql-init
+            name: fortisoar-v-pgsql
+          - mountPath: /var/log-init
+            name: fortisoar-v-log
+          - mountPath: /home/csadmin-init
+            name: fortisoar-v-home-csadmin
+          - mountPath: /opt/cyops/configs-init
+            name: fortisoar-v-configs
+      volumes:
+      - name: fortisoar-v-data
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-data
+      - name: fortisoar-v-rabbitmq
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-rabbitmq
+      - name: fortisoar-v-elasticsearch
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-elasticsearch
+      - name: fortisoar-v-pgsql
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-pgsql
+      - name: fortisoar-v-log
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-log
+      - name: fortisoar-v-home-csadmin
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-home-csadmin
+      - name: fortisoar-v-configs
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-configs  
+      containers:
+      - name: fortisoar
+        image: @PLACEHOLDER_DOCKER_IMAGE@
+        imagePullPolicy: Always
+        command: ["/usr/sbin/init"]
+        env:
+          # Name specified for load balancer gets added to 'alt_names' in self signed
+          # FortiSOAR certificates.
+          - name: HOSTNAME_LOAD_BALANCER
+            value: @PLACEHOLDER_HOSTNAME_LOAD_BALANCER@
+          # Access FortiSOAR UI using https://<load-balanacer-dns-name>:<port-ui>
+          - name: PORT_UI
+            value: "443"
+          - name: PORT_SME
+            value: "5671"
+          - name: IPV6
+            value: "false"
+          # Repository hostname
+          - name: HOSTNAME_REPO
+            value: "@PLACEHOLDER_HOSTNAME_REPO@"
+        resources:
+          requests:
+            memory: "16Gi"
+            cpu: "8.0"
+          limits:                              
+            memory: "32Gi"
+            cpu: "8.0"
+        securityContext:
+          privileged: true
+        tty: true
+        volumeMounts:
+          - mountPath: /tmp
+            name: slash-tmp
+          - mountPath: /var/tmp
+            name: slash-var-tmp 
+          - mountPath: /run
+            name: slash-run
+          - mountPath: /dev/shm
+            name: dshm
+          - mountPath: /sys/fs/cgroup
+            name: cgroup
+            readOnly: true
+          - mountPath: /data
+            name: fortisoar-v-data
+          - mountPath: /var/lib/rabbitmq
+            name: fortisoar-v-rabbitmq
+          - mountPath: /var/lib/elasticsearch
+            name: fortisoar-v-elasticsearch
+          - mountPath: /var/lib/pgsql
+            name: fortisoar-v-pgsql
+          - mountPath: /var/log
+            name: fortisoar-v-log
+          - mountPath: /home/csadmin
+            name: fortisoar-v-home-csadmin
+          - mountPath: /opt/cyops/configs
+            name: fortisoar-v-configs
+        ports:
+        - name: port-https
+          containerPort: 443
+          protocol: TCP
+        - name: port-sme
+          containerPort: 5671
+          protocol: TCP
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: slash-tmp
+      - emptyDir:
+          medium: Memory
+        name: slash-var-tmp
+      - emptyDir:
+          medium: Memory
+        name: slash-run
+      - emptyDir:
+          medium: Memory
+        name: dshm
+      - name: cgroup
+        hostPath:
+          path: /sys/fs/cgroup
+      - name: fortisoar-v-data
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-data
+      - name: fortisoar-v-rabbitmq
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-rabbitmq
+      - name: fortisoar-v-elasticsearch
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-elasticsearch
+      - name: fortisoar-v-pgsql
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-pgsql
+      - name: fortisoar-v-log
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-log
+      - name: fortisoar-v-home-csadmin
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-home-csadmin
+      - name: fortisoar-v-configs
+        persistentVolumeClaim:
+          claimName: fortisoar-pvc-configs

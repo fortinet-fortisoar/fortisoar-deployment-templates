@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-data
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 15Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-rabbitmq
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 15Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-elasticsearch
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 40Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-pgsql
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 150Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-log
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-home-csadmin
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fortisoar-pvc-configs
+  namespace: fortisoar
+  labels:
+    app: fortisoar
+spec:
+  accessModes:
+   - ReadWriteOnce
+  storageClassName: fortisoar-storageclass-ebs
+  resources:
+   requests:
+    storage: 15Gi
