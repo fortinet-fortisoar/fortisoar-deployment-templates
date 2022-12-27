@@ -11,16 +11,16 @@
  #kubectl apply -f fortisoar-pvc.yaml
  
  It creates below PVC.
- /data                  (fortisoar-pvc-data 15GB)
- /var/lib/rabbitmq      (fortisoar-pvc-rabbitmq 15GB)
- /var/lib/elasticsearch (fortisoar-pvc-elasticsearch 40GB)
- /var/lib/pgsql         (fortisoar-pvc-pgsql 150GB)
- /var/log               (fortisoar-pvc-log 5GB)
- /home/csadmin          (fortisoar-pvc-home-csadmin 20GB)
- /opt/cyops/configs     (fortisoar-pvc-configs 15GB)
+ /data                  (fsr-pvc-data 15GB)
+ /var/lib/rabbitmq      (fsr-pvc-rabbitmq 15GB)
+ /var/lib/elasticsearch (fsr-pvc-elasticsearch 40GB)
+ /var/lib/pgsql         (fsr-pvc-pgsql 150GB)
+ /var/log               (fsr-pvc-log 5GB)
+ /home/csadmin          (fsr-pvc-home-csadmin 20GB)
+ /opt/cyops/configs     (fsr-pvc-configs 15GB)
 
 5. Note down the load balancer name created by service.
- #kubectl get svc -n fortisoar -o jsonpath="{.items[0].status.loadBalancer.ingress[0].hostname}"
+ #kubectl get svc -n fsr -o jsonpath="{.items[0].status.loadBalancer.ingress[0].hostname}"
 
 6. Before creating statefulset, do below:
   1. Update the repository hostname placeholder. Note that even if you do not have private repository set,
@@ -30,11 +30,12 @@
 
   2. Update the load balancer hostname placeholder with value got from previous step. Below is example name.
 
-     sed -i 's#@PLACEHOLDER_HOSTNAME_LOAD_BALANCER@#k8s-fortisoa-fortisoa-b6fc340816-<account-id-here>.elb.ap-south-1.amazonaws.com#g' fortisoar-statefulset.yaml
+     sed -i 's#@PLACEHOLDER_HOSTNAME_LOAD_BALANCER@#k8s-fsr-fsr-xxxxxxxxxx-xxxxxxxxxxxxxxxx.elb.<region-code-here>.amazonaws.com#g' fortisoar-statefulset.yaml
+ 
 
   3. Update the docker image placeholder with the docker image path. Below is example path.
 
-     sed -i 's#@PLACEHOLDER_DOCKER_IMAGE@#<account-id-here>.dkr.ecr.ap-south-1.amazonaws.com/fortisoar/fortisoar:7.3.1#g' fortisoar-statefulset.yaml
+     sed -i 's#@PLACEHOLDER_DOCKER_IMAGE@#<account-id-here>.dkr.ecr.<region-code-here>.amazonaws.com/fortisoar/fortisoar:7.3.1#g' fortisoar-statefulset.yaml
 
 7. Create statefulset.
  #kubectl apply -f fortisoar-statefulset.yaml

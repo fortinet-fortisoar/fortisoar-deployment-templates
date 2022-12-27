@@ -1,17 +1,17 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: fortisoar
-  namespace: fortisoar
+  name: fsr
+  namespace: fsr
   labels:
-    app: fortisoar
+    app: fsr
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: external
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
     service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: preserve_client_ip.enabled=true
 spec:
   selector:
-    app: fortisoar
+    app: fsr
   type: LoadBalancer
   ports:
   - name: port-https
