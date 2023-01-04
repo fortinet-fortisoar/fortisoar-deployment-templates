@@ -5,7 +5,7 @@ metadata:
 provisioner: ebs.csi.aws.com
 reclaimPolicy: Retain
 allowVolumeExpansion: true
-volumeBindingMode: Immediate # Can be set as WaitForFirstConsumer
+volumeBindingMode: WaitForFirstConsumer
 parameters:
   type: gp2
   fsType: ext4 
